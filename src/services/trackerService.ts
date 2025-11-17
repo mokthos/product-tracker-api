@@ -9,6 +9,10 @@ export async function runTracker(
   const scraperManager = new ScraperManager(productQuery, sourceUrl, config);
   const matches = await scraperManager.runAll();
 
+  const topAmazon = matches.amazon[0] ?? null;
+  const topAliExpress = matches.aliexpress[0] ?? null;
+  const topShopify = matches.shopify[0] ?? null;
+
   return {
     productQuery,
     sourceUrl,
@@ -17,6 +21,9 @@ export async function runTracker(
     analysis: {
       dropshippingProbability: 0,
     },
+    amazonProductUrl: topAmazon?.url ?? null,
+    aliexpressProductUrl: topAliExpress?.url ?? null,
+    shopifyProductUrl: topShopify?.url ?? null,
   };
 }
 

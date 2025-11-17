@@ -40,6 +40,9 @@ export interface TrackerResponse {
   productPageUrl?: string;
   matches: PlatformMatches;
   analysis: MarginAnalysis;
+  amazonProductUrl?: string | null;
+  aliexpressProductUrl?: string | null;
+  shopifyProductUrl?: string | null;
 }
 
 export interface ScraperTimeoutConfig {

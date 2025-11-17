@@ -142,16 +142,16 @@ export class AmazonScraper extends BaseScraper {
         }
 
         const title = container.find('h2 a span').text().trim();
-        const relativeLink = container.find('h2 a').attr('href');
+        const rawLink = container.find('h2 a').attr('href');
 
-        if (!title || !relativeLink) {
+        if (!title || !rawLink) {
           return;
         }
 
-        const url =
-          relativeLink.startsWith('http') || relativeLink.startsWith('https')
-            ? relativeLink
-            : `${AMAZON_BASE_URL}${relativeLink}`;
+        const url = this.normalizeProductLink(rawLink);
+        if (!url) {
+          return;
+        }
 
         const image =
           container.find('img.s-image').attr('src') ??
@@ -174,6 +174,44 @@ export class AmazonScraper extends BaseScraper {
     );
 
     return products;
+  }
+
+  private normalizeProductLink(rawLink: string): string | null {
+    if (!rawLink) {
+      return null;
+    }
+
+    let candidate = rawLink.trim();
+
+    try {
+      if (!candidate.startsWith('http')) {
+        candidate = `${AMAZON_BASE_URL}${candidate.startsWith('/') ? '' : '/'}${candidate.replace(
+          /^\/+/,
+          '',
+        )}`;
+      }
+
+      let urlObject = new URL(candidate);
+      const redirectTarget = urlObject.searchParams.get('url') ?? urlObject.searchParams.get('location');
+      if (redirectTarget) {
+        const decoded = decodeURIComponent(redirectTarget);
+        urlObject = new URL(decoded.startsWith('http') ? decoded : `${AMAZON_BASE_URL}${decoded}`);
+      }
+
+      const asinMatch =
+        urlObject.pathname.match(/\/dp\/([A-Z0-9]{10})/i) ||
+        urlObject.pathname.match(/\/gp\/product\/([A-Z0-9]{10})/i);
+
+      if (asinMatch) {
+        return `${AMAZON_BASE_URL}/dp/${asinMatch[1].toUpperCase()}`;
+      }
+
+      return `${urlObject.origin}${urlObject.pathname}`.replace(/\/+$/, '');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.debug('[amazon] failed to normalize product link:', message);
+      return null;
+    }
   }
 
   private extractPrice(container: Cheerio<Element>): {
