@@ -1,0 +1,21 @@
+{
+  "actorSpecification": 1,
+  "name": "product-tracker-api",
+  "title": "Product Tracker API",
+  "description": "Discover matching products across Amazon, AliExpress, and Shopify.",
+  "version": "0.1",
+  "meta": {
+    "templateId": "project-cli"
+  },
+  "dockerfile": "./Dockerfile",
+  "defaultRunOptions": {
+    "buildCommand": "npm install && npm run build",
+    "startCommand": "node dist/main.js"
+  },
+  "runtime": {
+    "nodeVersion": "20.0"
+  },
+  "input": "./actor/input_schema.json"
+}
+
+

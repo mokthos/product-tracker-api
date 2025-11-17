@@ -1,0 +1,32 @@
+{
+  "title": "Product Tracker Actor Input",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "productQuery": {
+      "title": "Product query",
+      "type": "string",
+      "description": "Keywords or product name to discover across Amazon, AliExpress, and Shopify.",
+      "editor": "textfield",
+      "prefill": "portable blender"
+    },
+    "sourceUrl": {
+      "title": "Source URL",
+      "type": "string",
+      "description": "Optional social media or product link associated with the query.",
+      "editor": "textfield"
+    },
+    "maxResultsPerPlatform": {
+      "title": "Max results per platform",
+      "type": "integer",
+      "description": "Overrides the default MAX_RESULTS_PER_PLATFORM environment value.",
+      "minimum": 1,
+      "maximum": 100,
+      "editor": "number",
+      "prefill": 10
+    }
+  },
+  "required": ["productQuery"]
+}
+
+
